@@ -1,0 +1,86 @@
+# depslib dependency file v1.0
+1691080908 source:d:\download\ltnc\sdl_game\main.cpp
+	<SDL.h>
+	<SDL_image.h>
+	"BaseObject.h"
+	"MainObject.h"
+	"Timer.h"
+	"BulletObject.h"
+	"ThreatObject.h"
+	"ExplosionObject.h"
+	<stdlib.h>
+	<random>
+	<functional>
+
+1690624109 source:d:\download\ltnc\sdl_game\commonfunction.cpp
+	"CommonFunction.h"
+
+1691081073 d:\download\ltnc\sdl_game\commonfunction.h
+	<iostream>
+	<windows.h>
+	<string.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_mixer.h>
+	<SDL_ttf.h>
+	<vector>
+
+1690959453 source:d:\download\ltnc\sdl_game\baseobject.cpp
+	"BaseObject.h"
+
+1691077171 d:\download\ltnc\sdl_game\baseobject.h
+	"CommonFunction.h"
+
+1689759503 source:d:\download\ltnc\sdl_game\commonfunction.h
+	<iostream>
+	<windows.h>
+	<string.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_mixer.h>
+	<SDL_ttf.h>
+
+1689586451 source:d:\download\ltnc\sdl_game\mainobject.h
+	"BaseObject.h"
+
+1691077535 source:d:\download\ltnc\sdl_game\mainobject.cpp
+	"MainObject.h"
+	"BulletObject.h"
+
+1691077171 d:\download\ltnc\sdl_game\mainobject.h
+	"BaseObject.h"
+	"BulletObject.h"
+
+1690046880 d:\download\ltnc\sdl_game\timer.h
+	"CommonFunction.h"
+
+1690046792 source:d:\download\ltnc\sdl_game\timer.cpp
+	"Timer.h"
+
+1690372388 source:d:\download\ltnc\sdl_game\bulletobject.cpp
+	"BulletObject.h"
+
+1690258009 d:\download\ltnc\sdl_game\bulletobject.h
+	"BaseObject.h"
+	"CommonFunction.h"
+
+1690711145 d:\download\ltnc\sdl_game\threatobject.h
+	"CommonFunction.h"
+	"BaseObject.h"
+	<time.h>
+	<stdlib.h>
+
+1690800912 source:d:\download\ltnc\sdl_game\threatobject.cpp
+	"ThreatObject.h"
+
+1690884325 source:e:\e.cpp
+	<iostream>
+	<string.h>
+	<vector>
+
+1690911105 source:d:\download\ltnc\sdl_game\explosionobject.cpp
+	"ExplosionObject.h"
+
+1690910268 d:\download\ltnc\sdl_game\explosionobject.h
+	"BaseObject.h"
+
