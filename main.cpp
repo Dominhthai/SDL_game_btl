@@ -1,11 +1,14 @@
 #include<SDL.h>
 #include<SDL_image.h>
-#include "BaseObject.h"
 #include "MainObject.h"
 #include "Timer.h"
 #include "BulletObject.h"
 #include "ThreatObject.h"
 #include "ExplosionObject.h"
+#include "TextObject.h"
+#include "PlayerLife.h"
+#include "Frame.h"
+#include "MenuObject.h"
 #include<stdlib.h>
 #include<random>
 #include <functional>
@@ -13,6 +16,7 @@
 using namespace std;
 
 BaseObject g_background;
+TTF_Font* font_family;
 
 bool init()
 {
@@ -55,6 +59,24 @@ bool init()
 			}
                 }
 
+            //Load TTF Font
+			if(TTF_Init()== -1)
+            {
+                success = false;
+            }
+            font_family = TTF_OpenFont("font/Cabal-w5j3.ttf", 20);
+            if(font_family == NULL)
+            {
+                success = false;
+            }
+
+            //Load Music
+            if(Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 4096) == -1) success == false;
+            g_theme_music = Mix_LoadMUS("music/theme.mp3");
+            g_linda = Mix_LoadWAV("music/linda.wav");
+            g_bullet_fire = Mix_LoadWAV("music/fire.mp3");
+            g_collision[0] = Mix_LoadWAV("music/collision.mp3");
+            if(g_theme_music == NULL || g_linda == NULL|| g_bullet_fire == NULL) success = false;
         }
     }
 
@@ -65,11 +87,11 @@ bool init()
 std::vector <ThreatObject*> ThreatList()
 {
     std::vector<ThreatObject*> list_threats;
-    ThreatObject* threat_obj = new ThreatObject[10];
+//    ThreatObject* threat_obj = new ThreatObject[10];
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < THREAT_NUM; i++)
     {
-        ThreatObject* p_threat = (threat_obj + i);
+        ThreatObject* p_threat = new ThreatObject((i+1)*350);
         if(p_threat != NULL)
         {
             p_threat->loadImg("image/1x/enemy.png", gScreen);
@@ -98,8 +120,7 @@ int main(int argc, char* argv[])
 {
 
 Timer fps_timer;
-int num_die = 0;
-//loop flag
+
 bool is_quit = false;
 
     if (!init())
@@ -108,9 +129,22 @@ bool is_quit = false;
         return -1;
     }
 
+    //Load Menu
+    /*MenuObject load_menu;
+    int ret_menu = load_menu.ShowMenu(gScreen, font_family);
+    if(ret_menu == -1) is_quit = true;*/
+
     // Load background image
     bool ret = g_background.LoadObject("image/background/background.png", gScreen);//840*600
     if (ret == false) return -2;
+
+    //Load Text
+    TextObject time_game;
+    time_game.SetColor(255,255, 255);
+
+    TextObject mark_game;
+    mark_game.SetColor(255,255, 255);
+    Uint32 mark_count = 0;
 
     //Main character initialization
     MainObject* cat = new MainObject();
@@ -125,8 +159,31 @@ bool is_quit = false;
     if(rec == false) return -3;
     exp.SetClip();
 
-    while(!is_quit)
+    //Player life(3 hearts)
+    int num_die = 0;
+    PlayerLife remain_life;
+    remain_life.Init(gScreen);
+
+    //Load Menu
+    //MenuObject* load_menu;
+    //int ret_menu = load_menu.ShowMenu(gScreen, font_family);
+    //if(ret_menu == 1) is_quit = true;
+
+    int is_quit_music = 0; // Need this, if not, the background music would disappear
+    //while (!is_quit_music)
+    //{
+        //Play music
+       // Mix_PlayMusic(g_theme_music, 0);
+       // Mix_PlayChannel(-1, g_linda, 0);
+
+        //Load Menu
+    MenuObject load_menu;
+    int ret_menu = load_menu.ShowMenu(gScreen, font_family);
+    if(ret_menu == 1) is_quit = true;
+
+        while(!is_quit)
     {
+        //Mix_PlayMusic(g_theme_music[1], -1);
         fps_timer.start();
 
         while(SDL_PollEvent(&e) != 0)
@@ -137,19 +194,29 @@ bool is_quit = false;
                 break;
             }
 
-            cat->HandleInputAction(e, gScreen);
+            cat->HandleInputAction(e, gScreen, g_bullet_fire);
             //human_object.HandleInputAction(e);
 
         }
         SDL_SetRenderDrawColor(gScreen, 255, 255, 255, 255);
         SDL_RenderClear(gScreen);
 
-
         //x_change -=2;
         g_background.ApplyObject(gScreen, NULL, true); // Bien bool de check xem doi tuong load co phai laf background hay ko
 
         cat->HandleBullet(gScreen);// shot the bullet
         cat->Show(gScreen); // show character
+
+        //Draw Geometric(Frame)
+        FrameFormat rect_size(0, 0, SCREEN_WIDTH, 50);
+        Color color_data(0, 0, 0); // Color for the frame
+        Frame::RenderRectangle(rect_size, color_data, gScreen);
+
+        FrameFormat outline_size(1, 1, SCREEN_WIDTH - 1, 48);
+        Color color_data_outline(255, 255, 255);
+        Frame::RenderOutLine(outline_size, color_data_outline, gScreen);
+
+        remain_life.Show(gScreen);// Show player life remaining
 
         SDL_Rect mRect;// Rect collison of main character
         mRect.x = cat->getRect().x;
@@ -168,6 +235,7 @@ bool is_quit = false;
 
         for(int i = 0; i < threats_list.size(); i++)
         {
+
             ThreatObject* p_threat = threats_list.at(i);
             if (p_threat != NULL)
             {
@@ -183,8 +251,13 @@ bool is_quit = false;
         bool is_col_main = CommonFunc::CheckCollision(mRect, tRect); // Check va cham giua main character va enemy
         if (is_col_main)
         {
-            //Check explosion appear when threat expose to bullet and be destroyed!!!
-            /*for(int e = 0; e < 9; e++)
+            Mix_PlayChannel(-1, g_collision[0], 0);
+
+            num_die ++; // Dem so lan va cham, Neu qua 3 lan--> die!!!
+            if(num_die <= life)
+            {
+                //Neu va vao enemy, phat no
+                for(int e = 0; e < 9; e++)
             {
                 int x_pos = mRect.x - eRect.w + 120;//this explosion image will cover the bullet!!!
                 int y_pos = mRect.y - eRect.h + 80;//this explosion image will cover the bullet!!!
@@ -192,37 +265,17 @@ bool is_quit = false;
                 exp.set_frame(e);
                 exp.setRect(x_pos, y_pos);
                 exp.Show(gScreen);
-                //SDL_Delay(1);
-            }*/
-
-            num_die++;
-            if (num_die < life)
-            {
-               // SDL_Delay(1000);
-                //cat->set_x_val(0);
-                //cat->set_y_val(0);
-                            //Check explosion appear when threat expose to bullet and be destroyed!!!
-            for(int e = 0; e < 9; e++)
-            {
-                int x_pos = mRect.x - eRect.w + 120;//this explosion image will cover the bullet!!!
-                int y_pos = mRect.y - eRect.h + 80;//this explosion image will cover the bullet!!!
-
-                exp.set_frame(e);
-                exp.setRect(x_pos, y_pos);
-                exp.Show(gScreen);
-                //SDL_Delay(1);
+                SDL_RenderPresent(gScreen);
             }
-                cat->Free();
-                SDL_Delay(1000);
-               // continue;
 
-                //p_threat->Free();
-                //threats_list.erase(threats_list.begin() + i);
-                //i--;
-            }
+                SDL_Delay(1000);//Sau khi va vao enemy va phat no, doi 1 khoang TGian de quay lai vi tri ban dau
+
+                remain_life.Decrease();// Giam di 1 mang
+
                 p_threat->Free();
                 threats_list.erase(threats_list.begin() + i);
                 i--;
+            }
         }
 
         for (int b = 0; b < bullet_arr.size(); b++)
@@ -241,6 +294,7 @@ bool is_quit = false;
 
         if (is_col_bullet)
         {
+            mark_count++;
             //Check explosion appear when threat expose to bullet and be destroyed!!!
             for(int i = 0; i < 9; i++)
             {
@@ -250,6 +304,7 @@ bool is_quit = false;
                 exp.set_frame(i);
                 exp.setRect(x_pos, y_pos);
                 exp.Show(gScreen);
+                SDL_RenderPresent(gScreen);
                 //SDL_Delay(1);
             }
                 cat->RemoveBullet(b);
@@ -262,6 +317,37 @@ bool is_quit = false;
         }
             }
         }
+
+        //Show game time
+        std::string str_time = "TIME:";
+        Uint32 time_val = SDL_GetTicks()/1000;
+        // format current time clock
+        std::string currentTimeClockMin = (time_val/60 > 9) ? (to_string (time_val/60)) : ("0" + to_string (time_val/60)),
+           currentTimeClockSec = (time_val - int(time_val/60)*60 > 9) ?
+           to_string (time_val - int(time_val/60)*60) : ("0" + to_string (time_val - int(time_val/60)*60));
+
+        Uint32 val_time = 0 + time_val;
+        if(val_time < 0)
+        {
+            is_quit = true;
+        }
+        else
+        {
+            std::string str_val = currentTimeClockMin + ":" + currentTimeClockSec;
+            str_time += str_val;
+
+            time_game.setText(str_time);
+            time_game.LoadFromRenderText(font_family, gScreen);
+            time_game.set_x_axis(SCREEN_WIDTH - 200);
+            time_game.set_y_axis(15);
+            time_game.RenderText(gScreen);// Chi truyen 3 tham so dau
+        }
+
+        mark_game.setText("Mark: " + to_string(mark_count));
+        mark_game.LoadFromRenderText(font_family, gScreen);
+        mark_game.set_x_axis(SCREEN_WIDTH - 500);
+        mark_game.set_y_axis(15);
+        mark_game.RenderText(gScreen);
 
         SDL_RenderPresent(gScreen);
 
@@ -282,10 +368,11 @@ bool is_quit = false;
         {
             threats_list = ThreatList();
         }
-        cat->loadImg("image/1x/combo.png", gScreen);
-        cat->SetClip();
-        //cat->set_revision(1);
     }
+        //is_quit_music = 1;
+    //}
+
+
 
     CleanUp();
 

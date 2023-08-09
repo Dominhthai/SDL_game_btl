@@ -1,13 +1,16 @@
 # depslib dependency file v1.0
-1691080908 source:d:\download\ltnc\sdl_game\main.cpp
+1691577425 source:d:\download\ltnc\sdl_game\main.cpp
 	<SDL.h>
 	<SDL_image.h>
-	"BaseObject.h"
 	"MainObject.h"
 	"Timer.h"
 	"BulletObject.h"
 	"ThreatObject.h"
 	"ExplosionObject.h"
+	"TextObject.h"
+	"PlayerLife.h"
+	"Frame.h"
+	"MenuObject.h"
 	<stdlib.h>
 	<random>
 	<functional>
@@ -15,7 +18,7 @@
 1690624109 source:d:\download\ltnc\sdl_game\commonfunction.cpp
 	"CommonFunction.h"
 
-1691081073 d:\download\ltnc\sdl_game\commonfunction.h
+1691336167 d:\download\ltnc\sdl_game\commonfunction.h
 	<iostream>
 	<windows.h>
 	<string.h>
@@ -25,10 +28,10 @@
 	<SDL_ttf.h>
 	<vector>
 
-1690959453 source:d:\download\ltnc\sdl_game\baseobject.cpp
+1691548127 source:d:\download\ltnc\sdl_game\baseobject.cpp
 	"BaseObject.h"
 
-1691077171 d:\download\ltnc\sdl_game\baseobject.h
+1691568591 d:\download\ltnc\sdl_game\baseobject.h
 	"CommonFunction.h"
 
 1689759503 source:d:\download\ltnc\sdl_game\commonfunction.h
@@ -43,11 +46,11 @@
 1689586451 source:d:\download\ltnc\sdl_game\mainobject.h
 	"BaseObject.h"
 
-1691077535 source:d:\download\ltnc\sdl_game\mainobject.cpp
+1691419697 source:d:\download\ltnc\sdl_game\mainobject.cpp
 	"MainObject.h"
 	"BulletObject.h"
 
-1691077171 d:\download\ltnc\sdl_game\mainobject.h
+1691336179 d:\download\ltnc\sdl_game\mainobject.h
 	"BaseObject.h"
 	"BulletObject.h"
 
@@ -64,13 +67,13 @@
 	"BaseObject.h"
 	"CommonFunction.h"
 
-1690711145 d:\download\ltnc\sdl_game\threatobject.h
+1691249529 d:\download\ltnc\sdl_game\threatobject.h
 	"CommonFunction.h"
 	"BaseObject.h"
 	<time.h>
 	<stdlib.h>
 
-1690800912 source:d:\download\ltnc\sdl_game\threatobject.cpp
+1691301464 source:d:\download\ltnc\sdl_game\threatobject.cpp
 	"ThreatObject.h"
 
 1690884325 source:e:\e.cpp
@@ -78,9 +81,42 @@
 	<string.h>
 	<vector>
 
-1690911105 source:d:\download\ltnc\sdl_game\explosionobject.cpp
+1691160187 source:d:\download\ltnc\sdl_game\explosionobject.cpp
 	"ExplosionObject.h"
 
 1690910268 d:\download\ltnc\sdl_game\explosionobject.h
 	"BaseObject.h"
+
+1691515689 source:d:\download\ltnc\sdl_game\textobject.cpp
+	"TextObject.h"
+
+1691515689 d:\download\ltnc\sdl_game\textobject.h
+	"CommonFunction.h"
+
+1691253382 d:\download\ltnc\sdl_game\playerlife.h
+	"CommonFunction.h"
+	"BaseObject.h"
+
+1691257810 source:d:\download\ltnc\sdl_game\playerlife.cpp
+	"PlayerLife.h"
+
+1691259843 source:d:\download\ltnc\sdl_game\frame.cpp
+	"Frame.h"
+
+1691260775 d:\download\ltnc\sdl_game\frame.h
+	"CommonFunction.h"
+
+1691565735 d:\download\ltnc\sdl_game\menuobject.h
+	"TextObject.h"
+	"BaseObject.h"
+
+1691568591 source:d:\download\ltnc\sdl_game\menuobject.cpp
+	"MenuObject.h"
+
+1691515750 source:d:\download\ltnc\sdl_game\menuobject.h
+	"TextObject.h"
+	"BaseObject.h"
+
+1691568276 source:d:\download\ltnc\sdl_game\baseobject.h
+	"CommonFunction.h"
 
